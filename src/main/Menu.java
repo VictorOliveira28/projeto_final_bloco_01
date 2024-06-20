@@ -4,8 +4,10 @@ import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
 
+import controller.ProductsController;
 import model.Breads;
 import model.Drink;
+import model.Products;
 
 public class Menu {
 
@@ -14,15 +16,25 @@ public class Menu {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
-		Integer option, code;
+		ProductsController products = new ProductsController();
+
+		Integer option, code, quantity;
 		Double price;
 		String name;
-		
-		Breads bd = new Breads(1, 100, "Pao Suiço", 1.50);
-		Breads bd1 = new Breads(1, 100, "Pao Frances", 1.80);
-		Drink dr = new Drink(2, 5, "Café", 2.50, false);
-		Drink dr1 = new Drink(2, 7, "Whisky", 28.80, true);
-		
+		Integer type;
+		boolean alcoholic;
+
+		Breads bd = new Breads(products.generateCode(), 100, "Pao Suiço", 1.50, 1);
+		products.insert(bd);
+
+		Breads bd1 = new Breads(products.generateCode(), 100, "Pao Frances", 1.80, 1);
+		products.insert(bd1);
+
+		Drink dr = new Drink(products.generateCode(), 5, "Café", 2.50, 2, false);
+		products.insert(dr);
+
+		Drink dr1 = new Drink(products.generateCode(), 7, "Whisky", 28.80, 2, true);
+		products.insert(dr1);
 
 		while (true) {
 			System.out.println("****************************************");
@@ -36,7 +48,6 @@ public class Menu {
 			System.out.println("       3.Buscar produto por código      ");
 			System.out.println("       4.Atualizar produto              ");
 			System.out.println("       5.Apagar produto                 ");
-			System.out.println("       6.Vender                         ");
 			System.out.println("       0.Sair                           ");
 			System.out.println("                                        ");
 			System.out.println("****************************************");
@@ -65,21 +76,49 @@ public class Menu {
 				System.out.println("\nInsira o código do produto: ");
 				code = sc.nextInt();
 				sc.nextLine();
+
+				do {
+					System.out.println("Digite o tipo do produto(1-Paes ou 2-Bebidas): ");
+					type = sc.nextInt();
+				} while (type < 1 || type > 2);
+
+				System.out.println("Insira a quantidade do produto: ");
+				quantity = sc.nextInt();
+				sc.nextLine();
 				System.out.println("Insira o nome do produto: ");
 				name = sc.nextLine();
+				System.out.println("Insira o preço do produto: ");
+				price = sc.nextDouble();
+
+				if (type == 1) {
+
+					products.insert(new Breads(products.generateCode(), quantity, name, price, type));
+
+				} else if (code == 2) {
+					System.out.println("Insira a quantidade do produto: ");
+					quantity = sc.nextInt();
+					sc.nextLine();
+					System.out.println("Insira o nome do produto: ");
+					name = sc.nextLine();
+					System.out.println("Insira o preço do produto: ");
+					price = sc.nextDouble();
+					System.out.println("Insira o tipo da bebida (TRUE) Alcoolica (FALSE) Nao Alcoolica");
+					alcoholic = sc.nextBoolean();
+
+					products.insert(new Drink(code, quantity, name, price, type, alcoholic));
+
+				}
 
 				break;
 
 			case 2:
 				System.out.println("#####################################");
-				System.out.println("##### Listar todos os produtos #####");
+				System.out.println("##### Listar todos os produtos ######");
 				System.out.println("#####################################");
 				System.out.println("\n\n");
-				
-				System.out.println(bd);
-				System.out.println(bd1);
-				System.out.println(dr);
-				System.out.println(dr1);
+
+				products.listAll();
+
 				break;
 
 			case 3:
@@ -89,6 +128,8 @@ public class Menu {
 				System.out.println("\nInsira o código do produto: ");
 				code = sc.nextInt();
 
+				products.searchById(code);
+
 				break;
 
 			case 4:
@@ -97,7 +138,38 @@ public class Menu {
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
 				code = sc.nextInt();
+				sc.nextLine();
 
+				var found = products.findInList(code);
+
+				if (found == null || found.isEmpty()) {
+					System.out.println("Produto não encontrado.");
+				} else {
+					Products productUpdate = found.get(0);
+
+					System.out.println("Insira a quantidade do produto: ");
+					quantity = sc.nextInt();
+					sc.nextLine();
+
+					System.out.println("Insira o nome do produto: ");
+					name = sc.nextLine();
+
+					System.out.println("Insira o preço do produto: ");
+					price = sc.nextDouble();
+					sc.nextLine();
+
+					if (productUpdate instanceof Breads) {
+						type = 1;
+						Breads updateBread = new Breads(code, quantity, name, price, type);
+						products.update(updateBread);
+					} else if (productUpdate instanceof Drink) {
+						type = 2;
+						System.out.println("A bebida é alcoólica? (true para Alcoólica, false para Não Alcoólica): ");
+						alcoholic = sc.nextBoolean();
+						Drink updateDrink = new Drink(code, quantity, name, price, type, alcoholic);
+						products.update(updateDrink);
+					}
+				}
 				break;
 
 			case 5:
@@ -107,14 +179,7 @@ public class Menu {
 				System.out.println("\nInsira o código do produto: ");
 				code = sc.nextInt();
 
-				break;
-
-			case 6:
-				System.out.println("#####################################");
-				System.out.println("########## Vender produto ##########");
-				System.out.println("#####################################");
-				System.out.println("\nInsira o código do produto: ");
-				code = sc.nextInt();
+				products.delete(code);
 
 				break;
 
