@@ -9,12 +9,10 @@ public class Breads extends Products {
 	public Breads(Integer id, Integer quantity, String name, Double price) {
 		super(id, quantity, name, price);
 		
-	}
-	
+	}	
 
 	@Override
-	public boolean sell(Integer quantity) {
-				
+	public boolean sell(Integer quantity) {				
 
 		if (this.getQuantity() < quantity) {
 			System.out.println("Não temos essa quantidade em estoque.");
@@ -26,7 +24,6 @@ public class Breads extends Products {
 		this.setQuantity(this.getQuantity() - unitSell);
 		return true;
 
-	}	
-	
+	}		
 
 }
