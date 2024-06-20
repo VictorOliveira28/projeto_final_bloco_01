@@ -4,6 +4,9 @@ import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
 
+import model.Breads;
+import model.Drink;
+
 public class Menu {
 
 	public static void main(String[] args) {
@@ -11,8 +14,15 @@ public class Menu {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
-		int option, cod;
+		Integer option, code;
+		Double price;
 		String name;
+		
+		Breads bd = new Breads(1, 100, "Pao Suiço", 1.50);
+		Breads bd1 = new Breads(1, 100, "Pao Frances", 1.80);
+		Drink dr = new Drink(2, 5, "Café", 2.50, false);
+		Drink dr1 = new Drink(2, 7, "Whisky", 28.80, true);
+		
 
 		while (true) {
 			System.out.println("****************************************");
@@ -53,7 +63,7 @@ public class Menu {
 				System.out.println("##### Adicionar Produto #####");
 				System.out.println("#############################");
 				System.out.println("\nInsira o código do produto: ");
-				cod = sc.nextInt();
+				code = sc.nextInt();
 				sc.nextLine();
 				System.out.println("Insira o nome do produto: ");
 				name = sc.nextLine();
@@ -65,6 +75,11 @@ public class Menu {
 				System.out.println("##### Listar todos os produtos #####");
 				System.out.println("#####################################");
 				System.out.println("\n\n");
+				
+				System.out.println(bd);
+				System.out.println(bd1);
+				System.out.println(dr);
+				System.out.println(dr1);
 				break;
 
 			case 3:
@@ -72,7 +87,7 @@ public class Menu {
 				System.out.println("##### Buscar produto por código #####");
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
-				cod = sc.nextInt();
+				code = sc.nextInt();
 
 				break;
 
@@ -81,7 +96,7 @@ public class Menu {
 				System.out.println("######### Atualizar produto #########");
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
-				cod = sc.nextInt();
+				code = sc.nextInt();
 
 				break;
 
@@ -90,7 +105,7 @@ public class Menu {
 				System.out.println("########## Deletar produto ##########");
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
-				cod = sc.nextInt();
+				code = sc.nextInt();
 
 				break;
 
@@ -99,7 +114,7 @@ public class Menu {
 				System.out.println("########## Vender produto ##########");
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
-				cod = sc.nextInt();
+				code = sc.nextInt();
 
 				break;
 
