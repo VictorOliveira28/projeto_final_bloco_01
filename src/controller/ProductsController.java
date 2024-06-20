@@ -2,60 +2,91 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.Products;
 import repository.ProductsRepository;
 
-public class ProductsController implements ProductsRepository{
-	
+public class ProductsController implements ProductsRepository {
+
 	private List<Products> list = new ArrayList<>();
+	private Integer number = 0;
 
 	@Override
-	public void searchById(int numero) {
-		// TODO Auto-generated method stub
+	public void searchById(int number) {
 		
+		List<Products> foundProduct = findInList(number);
+		
+		if (foundProduct != null && !foundProduct.isEmpty()) {
+			for(Products prod : foundProduct) {
+				prod.visualize();
+			}
+			
+		} else {
+
+			System.out.printf("O produto id: %d não foi localizado!", number);
+		}
+
 	}
 
 	@Override
 	public void listAll() {
-		// TODO Auto-generated method stub
-		
+
+		for (Products product : list) {			
+			product.visualize();
+		}
+
 	}
 
 	@Override
 	public void insert(Products product) {
-		// TODO Auto-generated method stub
-		
+
+		list.add(product);
+
+		System.out.println("Produto cadastrado com sucesso!");
+
 	}
 
 	@Override
 	public void update(Products product) {
-		// TODO Auto-generated method stub
+		var prod = findInList(product.getId());
 		
+		if(prod != null &&  !prod.isEmpty()) {
+			
+			int index = list.indexOf(prod.get(0));			
+			list.set(index, product);
+			
+			System.out.println("\nO produto numero: " + product.getId() + " foi atualizado com sucesso!");
+		} else {
+			System.out.println("\nO produto numero: " + product.getId() + " não foi encontrado!");
+		}
+
 	}
 
 	@Override
 	public void delete(int numero) {
-		// TODO Auto-generated method stub
 		
+		List<Products> product = findInList(numero);
+		
+		if(product != null && !product.isEmpty()) {
+			list.remove(product.get(0));
+			System.out.println("Produto deletado com sucesso!");
+		} else {
+			System.out.println("Produto não encontrado!");
+		}
+
 	}
 
-	@Override
-	public void sell(Integer code, Double price) {
-		// TODO Auto-generated method stub
+	public List<Products> findInList(Integer code) {
 		
+		return list.stream()
+	               .filter(product -> product.getId() == code)
+	               .collect(Collectors.toList());
+		 
 	}
 	
-	public Products findInList(Integer code) {
-		
-		for(var prod : list) {
-			if(prod.getId() == code) {
-				return prod;
-			}
-		}
-		
-		return null;
+	public Integer generateCode() {
+		return ++number;
 	}
-	
 
 }
