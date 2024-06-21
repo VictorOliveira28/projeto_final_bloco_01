@@ -2,6 +2,7 @@ package main;
 
 import java.util.InputMismatchException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Scanner;
 
 import controller.ProductsController;
@@ -137,39 +138,56 @@ public class Menu {
 				System.out.println("######### Atualizar produto #########");
 				System.out.println("#####################################");
 				System.out.println("\nInsira o código do produto: ");
-				code = sc.nextInt();
-				sc.nextLine();
 
-				var found = products.findInList(code);
+				try {
+					code = sc.nextInt();
+					var found = products.findInList(code);
 
-				if (found == null || found.isEmpty()) {
-					System.out.println("Produto não encontrado.");
-				} else {
-					Products productUpdate = found.get(0);
+					if (found == null || found.isEmpty()) {
+						System.out.println("Produto não encontrado.");
+					} else {
+						Products productUpdate = found.get(0);
 
-					System.out.println("Insira a quantidade do produto: ");
-					quantity = sc.nextInt();
+						System.out.println("Insira a quantidade do produto: ");
+						quantity = sc.nextInt();
+						sc.nextLine();
+
+						System.out.println("Insira o nome do produto: ");
+						name = sc.nextLine();
+
+						System.out.println("Insira o preço do produto: ");
+						price = sc.nextDouble();
+						sc.nextLine();
+
+						if (productUpdate instanceof Breads) {
+							type = 1;
+							Breads updateBread = new Breads(code, quantity, name, price, type);
+							Optional<Products> updatedBread = products.update(updateBread);
+							if(updatedBread.isPresent()) {
+								System.out.println("Produto atualizado com sucesso!");
+							} else {
+								System.out.println("Falha ao atualizar o produto!");
+							}
+						} else if (productUpdate instanceof Drink) {
+							type = 2;
+							System.out.println("A bebida é alcoólica? (true para Alcoólica, false para Não Alcoólica): ");
+							alcoholic = sc.nextBoolean();
+							Drink updateDrink = new Drink(code, quantity, name, price, type, alcoholic);
+							Optional<Products> updatedDrink = products.update(updateDrink);
+							if(updatedDrink.isPresent()) {
+								System.out.println("Produto atualizado com Sucesso!");
+							} else {
+								System.out.println("Falha ao atualizar o produto!");
+							}
+							//products.update(updateDrink);
+						}
+					}					
+
+				} catch (InputMismatchException e) {
 					sc.nextLine();
-
-					System.out.println("Insira o nome do produto: ");
-					name = sc.nextLine();
-
-					System.out.println("Insira o preço do produto: ");
-					price = sc.nextDouble();
-					sc.nextLine();
-
-					if (productUpdate instanceof Breads) {
-						type = 1;
-						Breads updateBread = new Breads(code, quantity, name, price, type);
-						products.update(updateBread);
-					} else if (productUpdate instanceof Drink) {
-						type = 2;
-						System.out.println("A bebida é alcoólica? (true para Alcoólica, false para Não Alcoólica): ");
-						alcoholic = sc.nextBoolean();
-						Drink updateDrink = new Drink(code, quantity, name, price, type, alcoholic);
-						products.update(updateDrink);
-					}
+					System.out.println("Digite valores inteiros!");
 				}
+				
 				break;
 
 			case 5:
